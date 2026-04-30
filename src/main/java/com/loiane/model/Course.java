@@ -1,6 +1,8 @@
 package com.loiane.model;
 
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.persistence.Column;
@@ -15,6 +17,8 @@ import lombok.Data;
 
 @Data
 @Entity
+@SQLDelete(sql = "UPDATE Course SET status = 'Inativo' WHERE id = ?")
+@SQLRestriction("status = 'Ativo'")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,4 +35,10 @@ public class Course {
     @Pattern(regexp = "BACK-END|FRONT-END")
     @Column(length = 20, nullable = false)
     private String category;
+
+    @NotNull
+    @Length(max = 10)
+    @Pattern(regexp = "Ativo|Inativo")
+    @Column(length = 10, nullable = false)
+    private String status = "Ativo";
 }
