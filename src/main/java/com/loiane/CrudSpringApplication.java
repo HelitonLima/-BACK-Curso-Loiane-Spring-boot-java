@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.loiane.model.Course;
+import com.loiane.model.Lesson;
 import com.loiane.repository.CourseRepository;
 
 @SpringBootApplication
@@ -25,6 +26,13 @@ public class CrudSpringApplication {
 			Course c = new Course();
 			c.setName("Angular com Spring Boot");
 			c.setCategory(Category.FRONT_END);
+
+			Lesson lesson = new Lesson();
+
+			lesson.setName("Introdução");
+			lesson.setYoutubeUrl("Nb4uxLxdvxo");
+			lesson.setCourse(c);
+			c.getLessons().add(lesson);
 
 			courseRepository.save(c);
 		};
