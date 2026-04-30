@@ -1,5 +1,7 @@
 package com.loiane;
 
+import com.loiane.enums.Category;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,7 +24,7 @@ public class CrudSpringApplication {
 
 			Course c = new Course();
 			c.setName("Angular com Spring Boot");
-			c.setCategory("FRONT-END");
+			c.setCategory(Category.FRONT_END);
 
 			courseRepository.save(c);
 		};
