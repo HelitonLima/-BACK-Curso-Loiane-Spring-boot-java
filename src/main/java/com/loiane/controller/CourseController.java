@@ -16,52 +16,51 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.loiane.model.Course;
-import com.loiane.repository.CourseRepository;
+import com.loiane.service.CurseService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
 
 @Validated
 @RestController
 @RequestMapping("/api/courses")
-@AllArgsConstructor
 public class CourseController {
-    private final CourseRepository courseRepository;
+    private final CurseService curseService;
+
+    public CourseController(CurseService curseService) {
+        this.curseService = curseService;
+    }
 
     @GetMapping
     public List<Course> list() {
-        return courseRepository.findAll();
+        return curseService.list();
     }
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public Course create(@RequestBody @Valid Course course) {
-        return courseRepository.save(course);
+        return curseService.create(course);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Course> getById(@PathVariable @NotNull @Positive Long id) {
-        return courseRepository.findById(id).map(ResponseEntity::ok)
+        return curseService.getById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Course> update(@PathVariable @NotNull @Positive Long id, @RequestBody @Valid Course course) {
-        return courseRepository.findById(id).map(existingCourse -> {
-            existingCourse.setName(course.getName());
-            existingCourse.setCategory(course.getCategory());
-            Course updatedCourse = courseRepository.save(existingCourse);
-            return ResponseEntity.ok().body(updatedCourse);
-        }).orElse(ResponseEntity.notFound().build());
+        return curseService.update(id, course).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NotNull @Positive Long id) {
-        return courseRepository.findById(id).map(existingCourse -> {
-            courseRepository.delete(existingCourse);
-            return ResponseEntity.noContent().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        boolean deleted = curseService.delete(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
