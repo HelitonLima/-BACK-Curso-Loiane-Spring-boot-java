@@ -1,8 +1,11 @@
 package com.loiane.dto.mapper;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.loiane.dto.CourseDTO;
+import com.loiane.dto.LessonDTO;
 import com.loiane.enums.Category;
 import com.loiane.model.Course;
 
@@ -14,11 +17,15 @@ public class CouseMapper {
             return null;
         }
 
+        List<LessonDTO> lessons = course.getLessons().stream()
+            .map(lesson -> new LessonDTO(lesson.getId(), lesson.getName(), lesson.getYoutubeUrl()))
+            .toList();
+
         return new CourseDTO(
             course.getId(), 
             course.getName(), 
             course.getCategory().getValue(),
-            course.getLessons()
+            lessons
         );
     }
     
