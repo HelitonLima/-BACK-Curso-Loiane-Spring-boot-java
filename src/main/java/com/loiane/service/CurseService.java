@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import com.loiane.dto.CourseDTO;
 import com.loiane.dto.mapper.CouseMapper;
 import com.loiane.exeption.RecordNotFoundException;
+import com.loiane.model.Course;
 import com.loiane.repository.CourseRepository;
 
 import jakarta.validation.Valid;
@@ -39,11 +40,14 @@ public class CurseService {
         return courseMapper.toDTO(courseRepository.save(courseMapper.toEntity(course)));
     }
 
-    public CourseDTO update(@NotNull @Positive Long id, @Valid @NotNull CourseDTO course) {
+    public CourseDTO update(@NotNull @Positive Long id, @Valid @NotNull CourseDTO courseDTO) {
         return courseRepository.findById(id)
             .map(existingCourse -> {
-                existingCourse.setName(course.name());
-                existingCourse.setCategory(courseMapper.convertCategoryValue(course.category()));
+                Course course = courseMapper.toEntity(courseDTO);
+                existingCourse.setName(courseDTO.name());
+                existingCourse.setCategory(courseMapper.convertCategoryValue(courseDTO.category()));
+                existingCourse.getLessons().clear();
+                course.getLessons().forEach(existingCourse.getLessons()::add);
                 return courseMapper.toDTO(courseRepository.save(existingCourse));
             }).orElseThrow(() -> new RecordNotFoundException(id));
     }
