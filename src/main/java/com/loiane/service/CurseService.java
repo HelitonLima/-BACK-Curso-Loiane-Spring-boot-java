@@ -2,18 +2,23 @@ package com.loiane.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.loiane.dto.CourseDTO;
+import com.loiane.dto.CoursePageDTO;
 import com.loiane.dto.mapper.CouseMapper;
 import com.loiane.exeption.RecordNotFoundException;
 import com.loiane.model.Course;
 import com.loiane.repository.CourseRepository;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Validated
 @Service
@@ -26,9 +31,19 @@ public class CurseService {
         this.courseMapper = courseMapper;
     }
     
-    public List<CourseDTO> list() {
-        return courseRepository.findAll().stream()
-            .map(courseMapper::toDTO).toList();
+    // public List<CourseDTO> list() {
+    //     return courseRepository.findAll().stream()
+    //         .map(courseMapper::toDTO).toList();
+    // }
+
+    public CoursePageDTO list(@PositiveOrZero int page, @Positive @Max(100) int size) {
+        Page<Course> pageResult = courseRepository.findAll(PageRequest.of(page, size));
+
+        List<CourseDTO> courseDTOs = pageResult.getContent().stream()
+            .map(courseMapper::toDTO)
+            .toList();
+        
+        return new CoursePageDTO(courseDTOs, pageResult.getTotalElements(), pageResult.getTotalPages());
     }
 
     public CourseDTO getById(@NotNull @Positive Long id) {
