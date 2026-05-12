@@ -1,7 +1,7 @@
 package com.loiane.dto;
 
 import java.util.List;
-import java.util.Locale.Category;
+import com.loiane.enums.Category;
 
 import org.hibernate.validator.constraints.Length;
 

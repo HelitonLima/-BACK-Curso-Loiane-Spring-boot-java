@@ -30,11 +30,6 @@ public class CurseService {
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
     }
-    
-    // public List<CourseDTO> list() {
-    //     return courseRepository.findAll().stream()
-    //         .map(courseMapper::toDTO).toList();
-    // }
 
     public CoursePageDTO list(@PositiveOrZero int page, @Positive @Max(100) int size) {
         Page<Course> pageResult = courseRepository.findAll(PageRequest.of(page, size));
